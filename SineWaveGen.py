@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 seed = 250
 nTeachRuns = 600
-nTestRuns = 150
+nTestRuns = 100
 
 rand.seed(seed) # set the seed
 
@@ -43,8 +43,9 @@ for i in np.arange(2, nTeachRuns):
 	Win_dot_Yn = np.dot(W_in,teacher[i-1])
 	X[:,i] = np.tanh(W_dot_Xn+Win_dot_Yn).reshape(100)
 
-#plt.plot(X[50,:])
-#plt.show()
+plt.plot(X[75,:])
+plt.title("Reservoir Dynamics")
+plt.show()
 
 Y_dot_Xt = np.dot(teacher.reshape(1,nTeachRuns),X.T)
 X_dot_Xt_w_regularization = np.dot(X,X.T)+beta*np.identity(100)
@@ -52,12 +53,12 @@ X_dot_Xt_w_regularization = np.dot(X,X.T)+beta*np.identity(100)
 # Use Ridge Regression to calculate output Weights
 W_out = np.dot(Y_dot_Xt, linalg.inv(X_dot_Xt_w_regularization))
 training_results = np.dot(W_out,X).reshape(nTeachRuns)
-training_error = np.sum((training_results[100:nTeachRuns]-teacher[100:nTeachRuns])**2)
-print("Training Error: ",training_error)
+training_MSE = np.sqrt(np.sum((training_results[100:nTeachRuns]-teacher[100:nTeachRuns])**2))/(nTeachRuns-100)
 
 plt.plot(training_results[100:nTeachRuns],teacher[100:nTeachRuns])
 plt.xlabel('Training Results after 100 time steps')
 plt.ylabel('Teacher Sine Wave after 100 time steps')
+plt.title('Training MSE: '+str(training_MSE))
 plt.show()
 
 ## Pattern Generation Phase
@@ -73,7 +74,11 @@ for i in np.arange(1,nTestRuns):
 	X_train[:,i] = np.tanh(W_dot_Xn+Win_dot_Yn).reshape(100)
 	Y_train[i] = np.dot(W_out,X_train[:,i].reshape(100,1))
 
+expected_output = np.sin(np.linspace(0, np.pi*nTestRuns/10, nTestRuns))
+testing_MSE = np.sqrt(np.sum((expected_output-Y_train)**2))/nTestRuns
+
 plt.plot(Y_train, label = 'Generated Pattern')
-plt.plot(np.sin(np.linspace(0, np.pi*nTestRuns/10, nTestRuns)), label = 'Sine Wave')
+plt.plot(expected_output, label = 'Sine Wave')
+plt.title("Testing MSE: "+str(testing_MSE))
 plt.legend()
 plt.show()
