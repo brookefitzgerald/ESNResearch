@@ -7,7 +7,7 @@ import scipy.stats as stats
 import matplotlib.pyplot as plt
 
 seed = 250
-nTeachRuns = 600
+nTeachRuns = 500
 nTestRuns = 100
 
 rand.seed(seed) # set the seed
@@ -19,7 +19,7 @@ beta = 0.01 # regularization rate
 
 ## Initialize Reservoir
 
-rvs = stats.uniform(-3,6).rvs # uniform distribution between [-1,1]
+rvs = stats.uniform(-1,2).rvs # uniform distribution between [-1,1]
 
 W = random(100,100,density = 0.1, random_state = seed, data_rvs = rvs).A # uniformly distributed
 vals, vecs = np.absolute(eigs(W))
@@ -66,7 +66,6 @@ X_train = np.zeros((100,nTestRuns))
 X_train[:,0] = X[:,nTeachRuns-1]
 Y_train = np.zeros(nTestRuns)
 Y_train[0] = np.dot(W_out,X_train[:,0].reshape(100,1))
-print(Y_train[0])
 
 for i in np.arange(1,nTestRuns):
 	W_dot_Xn = np.dot(W,X[:,i-1].reshape(100,1))
