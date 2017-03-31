@@ -32,8 +32,8 @@ W_in *= 1.2
 
 b = np.array(rvs(100)).reshape(100,1)
 b*=0.1
+
 # Create teacher signal With 10 points per curve
-#teacher = np.sin(np.linspace(0., np.pi*nTeachRuns/10, nTeachRuns))
 teacher = np.array([np.sin(2*np.pi*n/10) for n in np.arange(0,nTeachRuns)])
 
 
