@@ -33,7 +33,6 @@ W_in *= 1.2
 b = np.array(rvs(100)).reshape(100,1)
 b*=0.1
 # Create teacher signal With 10 points per curve
-#teacher = np.sin(np.linspace(0., np.pi*nTeachRuns/10, nTeachRuns))
 teacher = np.array([np.sin(2*np.pi*n/10) for n in np.arange(0,nTeachRuns)])
 
 
@@ -41,7 +40,7 @@ M = np.ndarray(shape = (nTeachRuns,100))
 
 ## Teacher Forcing Stage
 X = np.zeros((100,nTeachRuns))
-X[0]=1.0
+X[:,0]=1.0
 
 for i in np.arange(2, nTeachRuns):
 	W_dot_Xn = np.dot(W,X[:,i-1].reshape(100,1))
@@ -89,4 +88,4 @@ plt.plot(Y_train, label = 'Generated Pattern')
 plt.plot(expected_output, label = 'Sine Wave')
 plt.title("Testing MSE: "+str(testing_MSE))
 plt.legend()
-plt.show()
+plt.show() 
