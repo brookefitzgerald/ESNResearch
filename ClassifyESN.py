@@ -3,7 +3,7 @@ import pandas as pd
 from os import listdir,getcwd
 
 zhang_dir = getcwd()+'\\ZhangData'
-data = np.zeros((132,4), dtype=[('neuron_id','a13'),
+data = np.zeros((132,6), dtype=[('neuron_id','a13'),
 								('raster_data',np.float32,(419,1000)),
 								('raster_info','a20',4),
 								('stimulus_id','a15',419),
@@ -20,11 +20,22 @@ for i,data_dir in enumerate(listdir(zhang_dir)):
 		labels_arr = labels_arr[0:(len(labels_arr)-1)]
 	data[i] = (neuron_id, data_arr, pd.read_csv(raster_info).values, labels_arr[:,0],labels_arr[:,1],labels_arr[:,2])
 
+# Getting only the neurons measured together during run number 1018
+index_1018=data['raster_info'][:,0,3]=='1018'
+data_1018 = np.zeros((11,6), dtype=[('neuron_id','a13'),
+								('raster_data',np.float32,(419,1000)),
+								('raster_info','a20',4),
+								('stimulus_id','a15',419),
+								('stimulus_position','a15',419),
+								('combined_id_position','a15',419)])
+for i in np.arange(11):
+	data_1018[i] = data[index_1018]
+
 def getSpecificStimulus(sid, neuron_index = None, d=data):
 	if neuron_index==None:
-		to_return = [x['raster_data'][x[0]==sid] for x in d[['stimulus_id','raster_data']][:][:,0]]
+		to_return = [x['raster_data'][x[0]==sid] for x in d[['stimulus_id','raster_data']][:][:]]
 	else:
-		to_return = [x['raster_data'][x[0]==sid] for x in d[['stimulus_id','raster_data']][neuron_index][:,0]]
+		to_return = [x['raster_data'][x[0]==sid] for x in d[['stimulus_id','raster_data']][neuron_index][:]]
 	return(to_return)
 
 def addExponentialDecayToNeuronRead(rate_of_exp_decrease, neuron_read):
@@ -32,10 +43,9 @@ def addExponentialDecayToNeuronRead(rate_of_exp_decrease, neuron_read):
     to_return = np.zeros(len(neuron_read))
     for i,x in enumerate(neuron_read):
         if x==1.0:
-            activation=1.0
+            activation+=1.0
         elif ((x==0.0) and (activation>0.0)):
-            print(rate_of_exp_decrease*np.exp(activation))
-            activation -= rate_of_exp_decrease*np.exp(activation)
+            activation *= rate_of_exp_decrease
         if activation<0.:
             activation=0.
         to_return[i]=activation
