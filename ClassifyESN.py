@@ -55,7 +55,7 @@ def addExponentialDecay(speed,d=data):
     for neuron in d:
         np.apply_along_axis(addExpDecay, axis = 1, arr = neuron['raster_data'])
 
-def createTeacherSignal(d=data):
+def createBriefTeacherSignal(d=data):
 	ind_dict = dict(zip(['car', 'couch', 'face', 'flower', 'guitar', 'hand', 'kiwi'],np.arange(7)))
 	teacher_signal = np.zeros(len(d), dtype = (np.float32,(7,419,1000)))
 	increase = [1.0/(1.0+np.exp(-0.7*x)) for x in np.linspace(-10,10,100)]
@@ -69,6 +69,19 @@ def createTeacherSignal(d=data):
 
 	return (teacher_signal)
 
+def createExtendedTeacherSignal(d=data):
+	ind_dict = dict(zip(['car', 'couch', 'face', 'flower', 'guitar', 'hand', 'kiwi'],np.arange(7)))
+	teacher_signal = np.zeros(len(d), dtype = (np.float32,(7,419,1000)))
+	increase = [1.0/(1.0+np.exp(-0.7*x)) for x in np.linspace(-10,10,100)]
+	for i, neuron in enumerate(d):
+		for j in np.arange(419):
+			stimulus_index = ind_dict[neuron['stimulus_id'][j]]
+			stimulus_shown = int(neuron['raster_info'][0])
+			teacher_signal[stimulus_index][i][stimulus_shown:stimulus_shown+100] = increase
+			teacher_signal[stimulus_index][i][stimulus_shown+100:1000] = 1.0
+			
+	return (teacher_signal)
+
 data_exp_decay_1018 = data_1018.copy()
 addExponentialDecay(0.995,data_exp_decay_1018)
-
+teach = createTeacherSignal(data_1018)
