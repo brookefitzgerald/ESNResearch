@@ -6,7 +6,6 @@ from scipy.sparse import random
 from scipy.optimize import brute
 import scipy.stats as stats
 import matplotlib.pyplot as plt
-import pandas as pd
 
 seed = 275 # 275, 276, 300
 nTeachRuns = 1000
@@ -26,8 +25,7 @@ scale_fb = 2.0
 scale_b = 0.5
 scale_noise = 0.01
 
-#dfm = pd.DataFrame(columns=['p','alpha', 'scale_in','scale_fb','scale_b','train_MSE'])
-#dfm = pd.read_csv(results.csv)
+
 ## Initialize Reservoir
 def ComputeRes(x, args):
 	f, ((ax1,ax2,ax3), (ax4,ax5,ax6)) = plt.subplots(2,3)

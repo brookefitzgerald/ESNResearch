@@ -1,0 +1,2 @@
+scale_input_data,num_bins,res_size,scale_res,alpha,scale_in,scale_b,scale_noise,exp_decay_rate,tot_corr,bin_corr,tot_test_corr,bin_test_corr
+TRUE,5,100,1,4,2.5,1.5,0,0.995,0,0,0,0
